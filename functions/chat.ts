@@ -1,6 +1,6 @@
 export const onRequestPost: PagesFunction = async ({ request, env }) => {
   try {
-    if (!env.GEMINI_API_KEY) {
+    if (!process.env.GEMINI_API_KEY) {
       return new Response(
         JSON.stringify({ error: "GEMINI_API_KEY belum diset" }),
         { status: 500 }
@@ -68,7 +68,7 @@ Aroganzz-DarkTrasherNet Siap Dengan Perintah Anda
 
     const res = await fetch(
       "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=" +
-        env.GEMINI_API_KEY,
+        process.env.GEMINI_API_KEY,
       {
         method: "POST",
         headers: {
