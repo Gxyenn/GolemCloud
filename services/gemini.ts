@@ -20,35 +20,14 @@ export async function getGeminiResponse(
       });
     }
 
-    if (msg.content?.trim()) {
-      parts.push({ text: msg.content });
+    if (msg.text) {
+      parts.push({ text: msg.text });
     }
 
     return {
-      role: msg.role === "user" ? "user" : "model",
-      parts: parts.length ? parts : [{ text: "..." }]
+      role: msg.role,
+      parts
     };
-  });
-
-  // pesan baru
-  const currentParts: any[] = [];
-
-  attachments.forEach(att => {
-    currentParts.push({
-      inlineData: {
-        mimeType: att.type,
-        data: att.data
-      }
-    });
-  });
-
-  if (prompt.trim()) {
-    currentParts.push({ text: prompt });
-  }
-
-  contents.push({
-    role: "user",
-    parts: currentParts
   });
 
   const res = await fetch("/functions/chat", {
