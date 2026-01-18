@@ -6,31 +6,41 @@ export async function getGeminiResponse(
   attachments: FileAttachment[] = []
 ): Promise<string> {
 
-  const contents = history.map(msg => {
+  const messagesToSend = [
+    ...history,
+    {
+      role: 'user',
+      content: prompt,
+      attachments: attachments // Attachments user saat ini
+    }
+  ];
+
+  const contents = messagesToSend.map((msg: any) => {
     const parts: any[] = [];
 
-    if (msg.attachments?.length) {
-      msg.attachments.forEach(att => {
+    // Handle Attachments
+    if (msg.attachments && msg.attachments.length > 0) {
+      msg.attachments.forEach((att: FileAttachment) => {
         parts.push({
           inlineData: {
             mimeType: att.type,
-            data: att.data
+            data: att.data 
           }
         });
       });
     }
 
-    if (msg.text) {
-      parts.push({ text: msg.text });
+    if (msg.content) {
+      parts.push({ text: msg.content });
     }
 
     return {
-      role: msg.role,
+      role: msg.role === 'user' ? 'user' : 'model',
       parts
     };
   });
 
-  const res = await fetch("/functions/chat", {
+  const res = await fetch("/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ contents })
